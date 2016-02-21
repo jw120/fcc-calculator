@@ -49,20 +49,17 @@ toFractional x =
     go (toFloat x)
 
 
-applyOp: Maybe BinOp -> Float -> Float -> Float
+applyOp: BinOp -> Float -> Float -> Float
 applyOp op x y =
   case op of
-    Just Add ->
+    Add ->
       x + y
 
-    Just Subtract ->
+    Subtract ->
       x - y
 
-    Just Multiply ->
+    Multiply ->
       x * y
 
-    Just Divide ->
+    Divide ->
       x / y
-
-    Nothing ->
-      y

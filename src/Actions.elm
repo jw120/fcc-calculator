@@ -11,3 +11,4 @@ type Action
   | Percent
   | AllClear
   | ClearEntry
+  | PlusMinus

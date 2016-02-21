@@ -1,7 +1,7 @@
 module Update where
 
 import Models exposing (AppModel, Entry(..))
-import Maths exposing (Digit, BinOp)
+import Maths exposing (Digit, BinOp(..))
 import Actions exposing (..)
 
 {-
@@ -21,33 +21,97 @@ Start:    entry=Empty, value=0, op=Nothing             Displays 0 (value)
 
 update : Action -> AppModel -> AppModel
 update action model =
-  case (action, model.entry) of
-    (NoOp, _) -> -- Do nothing
+  case action of
+    NoOp -> -- Do nothing
       model
 
-    (DigitEntry d, Empty) -> -- Start a new entry
-      { model | entry = Integer (Maths.evalDigit d) }
+    DigitEntry d ->
+      case model.entry of
+        Empty -> -- Start a new entry
+          { model
+            | entry = Integer (Maths.evalDigit d)
+          }
 
-    (DigitEntry d, Integer i) -> -- Add to an existing integer entry
-      { model | entry = Integer (i * 10 + Maths.evalDigit d)  }
+        Integer i -> -- Add to an existing integer entry
+          { model
+            | entry = Integer (i * 10 + Maths.evalDigit d)
+          }
 
-    (DigitEntry d, Decimal (before, after)) -> -- Add to an existing decimal entry
-      { model | entry = Decimal (before, after * 10 + Maths.evalDigit d)}
+        Decimal (before, after) -> -- Add to an existing decimal entry
+          { model
+              | entry = Decimal (before, after * 10 + Maths.evalDigit d)
+          }
 
-    (Point, Empty) -> -- Convert empty entry to a decimal
-      { model | entry = Decimal (0, 0) }
+        Result _ -> -- Overwrite a result
+          { model
+            | entry = Integer (Maths.evalDigit d)
+          }
 
-    (Point, Integer i) -> -- Convery integer entry to a decimal
-      { model | entry = Decimal (i, 0) }
+    Point ->
+      case model.entry of
+        Empty -> -- Convert empty entry to a decimal
+          { model
+            | entry = Decimal (0, 0)
+          }
 
-    (Point, Decimal _) -> -- Do nothing if point pressed while already in a decimal
-      model
+        Integer i -> -- Convert integer entry to a decimal
+          { model
+            | entry = Decimal (i, 0)
+          }
 
-    (BinOpEntry o, _) ->
-      { model | value = Models.evalEntry model.entry, op = Just o}
+        Decimal _ -> -- Do nothing if point pressed while already in a decimal
+          model
 
-    (Equals, e) ->
-      { model | value = Maths.applyOp model.op model.value (Models.evalEntry model.entry) }
+        Result _ -> -- Overwrite a result
+          { model
+            | entry = Decimal (0, 0)
+          }
 
-    (_, _) ->
+    BinOpEntry o ->
+      { model
+        | entry = Empty
+        , value = Models.evalEntry model.entry
+        , op = Just o
+      }
+
+    Equals ->
+      case model.op of
+        Nothing ->
+          model
+
+        Just op ->
+          let
+            answer = Maths.applyOp op model.value (Models.evalEntry model.entry)
+          in
+            { model
+              | entry = Result answer
+              , value = answer
+              , op = Nothing
+            }
+
+    Percent ->
+      case model.op of
+        Nothing -> -- Naked % we just hold a result for the number / 100
+          { model
+            | entry = Result ((Models.evalEntry model.entry) / 100)
+          }
+
+        Just op ->
+          { model
+            | entry = Result ((Maths.applyOp Multiply model.value (Models.evalEntry model.entry)) / 100)
+          }
+
+    AllClear ->
+      { model
+        | entry = Empty
+        , value = 0
+        , op = Nothing
+      }
+
+    ClearEntry ->
+      { model
+        | entry = Empty
+      }
+
+    PlusMinus ->
       model

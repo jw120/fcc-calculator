@@ -19,6 +19,7 @@ type Entry
   = Empty
   | Integer Int
   | Decimal (Int, Int)
+  | Result Float
 
 
 evalEntry : Entry -> Float
@@ -32,3 +33,6 @@ evalEntry entry =
 
     Decimal (a, b) ->
       toFloat a + Maths.toFractional b
+
+    Result f ->
+      f

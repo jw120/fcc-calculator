@@ -1,6 +1,6 @@
 /* Holds the display and all the rows vertically centred */
 .calc {
- height: 360px;
+ height: 420px;
  display: flex;
  flex-direction: column;
  justify-content: space-between;
@@ -54,5 +54,6 @@
     padding-top: 7px;
 }
 
-
-
+.calc-debug-box {
+  height: 50px;
+}
