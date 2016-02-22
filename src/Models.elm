@@ -4,8 +4,8 @@ import Maths exposing (BinOp)
 
 type alias AppModel =
   { entry : Entry
-  , op : Maybe BinOp
   , value : Float
+  , op : Maybe BinOp
   , debugMode : Bool
   }
 
@@ -16,6 +16,14 @@ initialModel =
   , value = 0
   , debugMode = False
   }
+
+-- For debugging
+showAppModel : AppModel -> String
+showAppModel model =
+  "entry = " ++ toString model.entry ++
+    ", value = " ++ toString model.value ++
+    ", op = " ++ toString model.op
+
 
 type Entry
   = Empty

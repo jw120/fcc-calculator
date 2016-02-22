@@ -1,6 +1,5 @@
 module View (..) where
 
-import Char
 import Html exposing (div)
 import Html.Attributes exposing (class)
 import Html.Events
@@ -12,9 +11,7 @@ import Models
 view : Signal.Address Action -> Models.AppModel -> Html.Html
 view address model =
   div
-    [ class "calc"
-    , keyPressHandling address
-    ]
+    [ class "calc" ]
     [ calcDisplay model
     , calcButtonRow address
         ("AC", Actions.AllClear, [class "calc-button-clear"])
@@ -49,7 +46,7 @@ debugBox : Models.AppModel -> Html.Html
 debugBox model =
   div
     [ class "calc-debug-box" ]
-    [ Html.text <| if model.debugMode then toString model else "" ]
+    [ Html.text <| if model.debugMode then Models.showAppModel model else "" ]
 
 calcDisplay : Models.AppModel -> Html.Html
 calcDisplay model =
@@ -90,33 +87,3 @@ calcButton address action label extraAttributes =
   div
     (class "calc-button" ::  Html.Events.onClick address action :: extraAttributes)
     [ div [ class "calc-button-label"] [Html.text label] ]
-
-
-keyPressHandling : Signal.Address Action -> Html.Attribute
-keyPressHandling address =
-  let
-    keyHandler : Int -> Action
-    keyHandler key =
-      case Char.fromCode key of
-        '1' -> Actions.DigitEntry One
-        '2' -> Actions.DigitEntry Two
-        '3' -> Actions.DigitEntry Three
-        '4' -> Actions.DigitEntry Four
-        '5' -> Actions.DigitEntry Five
-        '6' -> Actions.DigitEntry Six
-        '7' -> Actions.DigitEntry Seven
-        '8' -> Actions.DigitEntry Eight
-        '9' -> Actions.DigitEntry Nine
-        '0' -> Actions.DigitEntry Zero
-        '+' -> Actions.BinOpEntry Maths.Add
-        '-' -> Actions.BinOpEntry Maths.Subtract
-        '*' -> Actions.BinOpEntry Maths.Multiply
-        '/' -> Actions.BinOpEntry Maths.Divide
-        '%' -> Actions.Percent
-        '.' -> Actions.Point
-        '=' -> Actions.Equals
-        'd' -> Actions.ToggleDebug
-        'D' -> Actions.ToggleDebug
-        _ -> Actions.NoOp
-  in
-    Html.Events.onKeyPress address keyHandler
