@@ -114,4 +114,11 @@ update action model =
       }
 
     PlusMinus ->
-      model
+      { model
+        | entry = Models.negate model.entry
+      }
+
+    ToggleDebug ->
+      { model
+        | debugMode = not model.debugMode
+      }

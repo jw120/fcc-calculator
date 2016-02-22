@@ -9,6 +9,6 @@ Then open `calculator.html`
 
 # TO DO
 
-* Implement +-
-* Implement keyboard Entry
-* Implement debug mode on/off
+* Implement keyboard Entry - Not working
+* Implement debug mode on/off - To be tested (with keyboard)
+* Refactor file layout

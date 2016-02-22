@@ -12,3 +12,4 @@ type Action
   | AllClear
   | ClearEntry
   | PlusMinus
+  | ToggleDebug
